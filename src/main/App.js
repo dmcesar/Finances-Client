@@ -2,6 +2,7 @@ import React from 'react';
 
 import Routes from './routes'
 import Navbar from '../components/navbar'
+import AuthenticationProvider from './authentication-provider'
 
 import 'toastr/build/toastr.min.js'
 
@@ -18,12 +19,12 @@ class App extends React.Component {
 
   render() {
     return(
-      <>
+      <AuthenticationProvider>
         <Navbar />
         <div className="container">
             <Routes />
         </div>
-      </>
+      </AuthenticationProvider>
     )
   }
 }

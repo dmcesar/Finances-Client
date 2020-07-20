@@ -2,7 +2,8 @@ import React from 'react'
 
 import { withRouter } from 'react-router-dom'
 
-import LocalStorageService from '../app/service/local-storage-service'
+import { AuthContext } from '../main/authentication-provider'
+
 import UserService from '../app/service/user-service'
 
 import Card from '../components/card'
@@ -26,8 +27,6 @@ class Login extends React.Component {
     }
 
     login = () => {
-
-        console.log("login() called");
         
         this.service.authenticate({
 
@@ -36,22 +35,19 @@ class Login extends React.Component {
 
         }).then(response => {
 
-            /* Store user in cockies */
-            LocalStorageService.addItem('_signed_user', JSON.stringify(response.data))
+            this.context.initSession(response.data);
 
-            /* Navigate to /home */
-            this.props.history.push('/home')
+            this.props.history.push('/home');
 
         }).catch(error => {
             
-            errorMessage(error.response.data)
+            errorMessage(error.response);
         })
     }
 
     register = () => {
 
-        console.log("register() called");
-        this.props.history.push('/register')
+        this.props.history.push('/register');
     }
 
     render() {
@@ -100,5 +96,7 @@ class Login extends React.Component {
         )
     }
 }
+
+Login.contextType = AuthContext;
 
 export default withRouter(Login)

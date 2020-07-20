@@ -1,7 +1,7 @@
 import React from 'react'
 
-import LocalStorageService from '../app/service/local-storage-service'
 import UserService from '../app/service/user-service'
+import {AuthContext} from '../main/authentication-provider'
 
 class Home extends React.Component {
 
@@ -13,26 +13,19 @@ class Home extends React.Component {
 
     constructor() {
 
-        super()
-
-        this.userService = new UserService()
+        super();
+        this.userService = new UserService();
     }
 
     componentDidMount() {
 
-        const signedUserObj = JSON.parse(LocalStorageService.getItem('_signed_user'))
+        const signedUser = this.context.signedUser;
 
-        this.setState({userName: signedUserObj.name});
-
-        this.userService.getBalanceByUser(signedUserObj.id)
-        
+        this.userService.getBalanceByUser(signedUser.id)
         .then( (response) => {
-
-            this.setState( {balance: response.data} )
-        
+            this.setState( {balance: response.data} );
         }).catch((error) => {
-
-            console.log(error.response)
+            console.log(error.response);
         })
     }
 
@@ -61,5 +54,7 @@ class Home extends React.Component {
         )
     }
 }
+
+Home.contextType = AuthContext;
 
 export default Home

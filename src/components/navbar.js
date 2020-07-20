@@ -1,8 +1,9 @@
 import React from 'react'
 
 import NavbarItem from './navbar-item'
+import {AuthConsumer} from '../main/authentication-provider'
 
-function Navbar() {
+function Navbar(props) {
 
     return(
         <div className="navbar navbar-expand-lg fixed-top navbar-dark bg-primary">
@@ -19,9 +20,9 @@ function Navbar() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarResponsive">
                     <ul className="navbar-nav">
-                        <NavbarItem href="#/entries" label="Entries" />
-                        <NavbarItem href="#/register" label="Register" />
-                        <NavbarItem href="#/authenticate" label="Login" />
+                        <NavbarItem render={props.isUserAuthenticated} href="#/home" label="Home" />
+                        <NavbarItem render={props.isUserAuthenticated} href="#/entries" label="Entries" />
+                        <NavbarItem render={props.isUserAuthenticated} onClick={props.logout} href="#/authenticate" label="Logout" />
                     </ul>
                 </div>
             </div>
@@ -29,4 +30,11 @@ function Navbar() {
     )
 }   
 
-export default Navbar
+export default () => (
+
+    <AuthConsumer>
+        {(context) => (
+            <Navbar isUserAuthenticated={context.isAuthenticated} logout={context.closeSession} />
+        )}
+    </AuthConsumer>
+)

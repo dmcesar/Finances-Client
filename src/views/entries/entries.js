@@ -131,9 +131,9 @@ class Entries extends React.Component {
         const typesList = this.service.getTypesList();
 
         const confirmDialogFooter = <div>
-                            <Button label="Delete" icon="pi pi-check" onClick={this.delete} />
-                            <Button label="Cancel" icon="pi pi-times" onClick={this.closeConfirmDialog} className="p-button-secondary"/>
-                        </div>
+                                        <Button label="Delete" icon="pi pi-check" onClick={this.delete} />
+                                        <Button label="Cancel" icon="pi pi-times" onClick={this.closeConfirmDialog} className="p-button-secondary"/>
+                                    </div>
 
         return(
             <Card title="My entries">
