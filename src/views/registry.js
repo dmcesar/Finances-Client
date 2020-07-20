@@ -5,6 +5,10 @@ import FormGroup from '../components/form-group'
 
 import {withRouter} from 'react-router-dom'
 
+import UserService from '../app/service/user-service'
+
+import { successMessage, errorMessage } from '../components/toastr'
+
 class Registry extends React.Component {
 
     state = {
@@ -15,9 +19,42 @@ class Registry extends React.Component {
         passwordConfirmation : ''
     }
 
+    constructor() {
+
+        super()
+
+        this.userService = new UserService()
+    }
+
     register = () => {
 
-        console.log("register() called")
+        const {name, email, password, passwordConfirmation} = this.state;
+
+        const user = { name, email, password, passwordConfirmation };
+
+        try {
+
+            this.userService.validate(user);
+            
+        } catch (error) {
+            
+            const msgs = error.messages;
+
+            msgs.forEach(msg => errorMessage(msg));
+        }
+
+        this.userService.register(user)
+
+        .then( response => {
+
+            successMessage('User registered.')
+
+            this.props.history.push('/authenticate')
+        
+        }).catch( error => {
+
+            errorMessage(error.response.data)
+        })
     }
 
     cancel = () => {
@@ -60,8 +97,18 @@ class Registry extends React.Component {
                                     name="password"
                                     onChange={(e) => this.setState({passwordConfirmation: e.target.value})}/>
                             </FormGroup>
-                            <button onClick={this.register} type="button" className="btn btn-success">Register account</button>
-                            <button onClick={this.cancel} type="button" className="btn btn-danger">Login</button>
+                            <button 
+                                onClick={this.register} 
+                                type="button" 
+                                className="btn btn-success">
+                                    <i className="pi pi-save"></i>   Register account
+                                </button>
+                            <button 
+                                onClick={this.cancel} 
+                                type="button" 
+                                className="btn btn-danger">
+                                    <i className="pi pi-times"></i>   Cancel
+                                </button>
                         </div>
                     </div>
                 </div>

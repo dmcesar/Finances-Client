@@ -2,39 +2,50 @@ import React from 'react'
 
 import { withRouter } from 'react-router-dom'
 
-import axios from 'axios'
+import LocalStorageService from '../app/service/local-storage-service'
+import UserService from '../app/service/user-service'
 
 import Card from '../components/card'
 import FormGroup from '../components/form-group'
+
+import { errorMessage } from '../components/toastr'
 
 class Login extends React.Component {
 
     state = {
 
         email : '',
-        password : '',
-        errorMessage : null
+        password : ''
+    }
+
+    constructor() {
+
+        super();
+
+        this.service = new UserService();
     }
 
     login = () => {
 
         console.log("login() called");
-     
-        axios
-            .post("http://localhost:8080/api/users/authenticate", {
-                
-                email: this.state.email,
-                password: this.state.password
+        
+        this.service.authenticate({
 
-            }).then(response => {
+            email: this.state.email,
+            password: this.state.password
 
-                this.props.history.push('/home')
+        }).then(response => {
 
-            }).catch(error => {
+            /* Store user in cockies */
+            LocalStorageService.addItem('_signed_user', JSON.stringify(response.data))
 
-                this.setState( {errorMessage: error.response.data} )
+            /* Navigate to /home */
+            this.props.history.push('/home')
 
-            })
+        }).catch(error => {
+            
+            errorMessage(error.response.data)
+        })
     }
 
     register = () => {
@@ -49,9 +60,6 @@ class Login extends React.Component {
                 <div className="col-md-6" style={ {position : 'relative', left: '300px'} }>
                     <div className="bs-docs-section">
                         <Card title="Login">
-                            <div className="row">
-                                <spam>{this.state.errorMessage}</spam>
-                            </div>
                             <div className="col-md-12">
                                 <div className="bs-component">
                                     <fieldset>
@@ -72,8 +80,16 @@ class Login extends React.Component {
                                                     value={this.setState.password}
                                                     onChange={ (e) => this.setState({password: e.target.value}) }/>
                                         </FormGroup>
-                                        <button onClick={this.login} className="btn btn-success">Login</button>
-                                        <button onClick={this.register} className="btn btn-danger">Register account</button>
+                                        <button 
+                                            onClick={this.login} 
+                                            className="btn btn-success">
+                                                <i className="pi pi-sign-in"></i>   Login
+                                            </button>
+                                        <button 
+                                            onClick={this.register} 
+                                            className="btn btn-danger">
+                                                <i className="pi pi-plus"></i>   Register account
+                                            </button>
                                     </fieldset>
                                 </div>
                             </div>
